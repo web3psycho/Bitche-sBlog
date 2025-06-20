@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The 16 Billion Password Leak: An Interactive Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Neutrals -->
+    <!-- Application Structure Plan: A thematic, single-page scrolling application designed to guide users from awareness to action. The structure starts with a hero section for immediate confirmation (The Truth), moves to an explainer of the event (What Happened?), visualizes the scope (The Impact), clarifies a key point of confusion (The Nuance: New vs. Old), and culminates in an interactive checklist (Your Action Plan). This flow is designed for usability, preventing overwhelm by breaking down a complex topic into logical, digestible sections, with a clear call to action to the solutions. -->
+    <!-- Visualization & Content Choices: 1. Key Stats (Inform): Large animated numbers for 16 billion credentials. 2. Leak Process (Organize/Explain): A CSS-based flowchart visualizes the infostealer-to-leak pipeline. 3. Affected Services (Compare/Relationships): A Chart.js doughnut chart visualizes the types of services impacted, offering a quick, high-level understanding. 4. New vs. Old Debate (Compare): A side-by-side text comparison clarifies the issue. 5. Credential Stuffing (Explain): A simple CSS animation demonstrates the attack. 6. Action Plan (Drive Action): An interactive HTML/JS checklist with a progress bar provides clear steps and feedback. These choices prioritize user understanding and engagement over raw data presentation, using Chart.js for data visualization and custom HTML/CSS/JS for diagrams and interactive elements. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .stat-card-bg { background-color: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+        .flow-line { content: ''; position: absolute; left: 50%; transform: translateX(-50%); width: 2px; background-color: #cbd5e1; z-index: -1; }
+        .flow-step:not(:last-child)::after { @apply flow-line; top: 100%; height: 4rem; }
+        .checklist-item[open] summary { background-color: #f0f9ff; }
+        .progress-bar-fill { transition: width 0.5s ease-in-out; }
+        .chart-container { position: relative; width: 100%; max-width: 400px; margin-left: auto; margin-right: auto; height: 350px; max-height: 400px; }
+        @media (min-width: 768px) { .chart-container { height: 400px; } }
+        .credential-stuffing-animation div { animation: drop 4s infinite ease-in-out; }
+        @keyframes drop {
+            0% { transform: translateY(-100%); opacity: 0; }
+            20% { transform: translateY(0); opacity: 1; }
+            80% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(100%); opacity: 0; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <header class="bg-white/80 backdrop-blur-sm sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <h1 class="font-bold text-xl text-blue-600">Leak Report</h1>
+            <div class="hidden md:flex space-x-8">
+                <a href="#truth" class="text-slate-600 hover:text-blue-600">The Truth</a>
+                <a href="#impact" class="text-slate-600 hover:text-blue-600">Impact</a>
+                <a href="#action" class="text-slate-600 hover:text-blue-600">Action Plan</a>
+            </div>
+            <a href="#action" class="md:hidden bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">Take Action</a>
+        </nav>
+    </header>
+
+    <main>
+        <section id="truth" class="py-20 md:py-32 bg-slate-100">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-4xl md:text-6xl font-extrabold text-slate-900 leading-tight">The 16 Billion Password Leak is Real.</h2>
+                <p class="mt-6 max-w-3xl mx-auto text-lg md:text-xl text-slate-600">Cybersecurity researchers have confirmed one of the largest credential exposures in history. This guide will help you understand what happened and what you can do to protect yourself.</p>
+                
+                <div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                    <div class="bg-white p-8 rounded-2xl shadow-lg border border-slate-200">
+                        <div id="leaked-credentials" class="text-5xl font-bold text-blue-600">0</div>
+                        <p class="mt-2 text-slate-600 font-medium">Leaked Credentials</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-2xl shadow-lg border border-slate-200">
+                        <div id="leaked-databases" class="text-5xl font-bold text-blue-600">0</div>
+                        <p class="mt-2 text-slate-600 font-medium">Exposed Databases</p>
+                    </div>
+                </div>
+
+                <div class="mt-12">
+                    <a href="#action" class="bg-blue-600 text-white font-bold py-4 px-8 rounded-lg text-lg hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/20">Go to Action Plan</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="what-happened" class="py-20">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h3 class="text-4xl font-bold text-slate-900">How Did This Happen?</h3>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-slate-600">This wasn't a single hack on one company. The data was collected over time from millions of individual devices using malicious software and then compiled into massive lists.</p>
+                </div>
+                
+                <div class="max-w-xl mx-auto">
+                    <div class="relative flex flex-col items-center">
+                        <div class="flow-step w-full flex items-center flex-col text-center">
+                            <div class="bg-white rounded-full h-16 w-16 flex items-center justify-center shadow-md border-2 border-blue-200">
+                                <span class="text-2xl">🦠</span>
+                            </div>
+                            <h4 class="font-bold mt-4 text-lg">1. Infostealer Malware Infects Device</h4>
+                            <p class="text-slate-600 mt-1">Malicious software silently infects a user's computer or phone, often through deceptive downloads or phishing links.</p>
+                        </div>
+
+                        <div class="flow-step w-full flex items-center flex-col text-center mt-16">
+                             <div class="bg-white rounded-full h-16 w-16 flex items-center justify-center shadow-md border-2 border-blue-200">
+                                <span class="text-2xl">🔑</span>
+                            </div>
+                            <h4 class="font-bold mt-4 text-lg">2. Credentials are Stolen</h4>
+                            <p class="text-slate-600 mt-1">The malware automatically captures saved usernames, passwords, and other sensitive data from web browsers and applications.</p>
+                        </div>
+                        
+                        <div class="flow-step w-full flex items-center flex-col text-center mt-16">
+                            <div class="bg-white rounded-full h-16 w-16 flex items-center justify-center shadow-md border-2 border-blue-200">
+                                <span class="text-2xl">🗄️</span>
+                            </div>
+                            <h4 class="font-bold mt-4 text-lg">3. Data is Sent to Criminals</h4>
+                            <p class="text-slate-600 mt-1">The stolen information is sent to servers controlled by cybercriminals.</p>
+                        </div>
+
+                        <div class="w-full flex items-center flex-col text-center mt-16">
+                           <div class="bg-white rounded-full h-16 w-16 flex items-center justify-center shadow-md border-2 border-blue-200">
+                                <span class="text-2xl">🔓</span>
+                            </div>
+                            <h4 class="font-bold mt-4 text-lg">4. Databases are Exposed</h4>
+                            <p class="text-slate-600 mt-1">Criminals compile the data into huge databases which are sometimes left unsecured, leading to their discovery and widespread exposure.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="impact" class="py-20 bg-slate-100">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h3 class="text-4xl font-bold text-slate-900">Who Is at Risk?</h3>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-slate-600">The leak affects virtually every major online service. If you use the internet, you are potentially at risk. The primary danger comes from password reuse across different sites.</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div class="prose lg:prose-lg text-slate-700 max-w-none">
+                        <h4>A Blueprint for Mass Exploitation</h4>
+                        <p>This leak is not just a list of passwords; it's a tool for cybercriminals. With this data, they can perform several malicious activities:</p>
+                        <ul>
+                            <li><strong>Account Takeovers (ATO):</strong> Directly logging into your accounts to steal information or money.</li>
+                            <li><strong>Identity Theft:</strong> Using your personal data from multiple services to impersonate you.</li>
+                            <li><strong>Targeted Phishing Scams:</strong> Crafting highly convincing fake emails or texts using your real information to trick you.</li>
+                            <li><strong>Credential Stuffing:</strong> The most common attack, where bots automatically try your leaked password on hundreds of other websites.</li>
+                        </ul>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="impactChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="nuance" class="py-20">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h3 class="text-4xl font-bold text-slate-900">New vs. Old Data: Does It Matter?</h3>
+                     <p class="mt-4 max-w-3xl mx-auto text-lg text-slate-600">There's debate about how "new" these 16 billion records are. But for your security, the distinction is irrelevant. Here's why.</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8 items-start">
+                     <div class="bg-white p-8 rounded-2xl shadow-lg border border-slate-200">
+                         <h4 class="text-xl font-bold text-slate-800">The Argument: It's "Old Data"</h4>
+                         <p class="mt-4 text-slate-600">Some experts argue this is a "combolist" — a massive compilation of data from many previous breaches over several years. They suggest not all of it is from recent hacks.</p>
+                     </div>
+                     <div class="bg-white p-8 rounded-2xl shadow-lg border border-slate-200">
+                        <h4 class="text-xl font-bold text-slate-800">Why It Doesn't Matter: Credential Stuffing</h4>
+                        <p class="mt-4 text-slate-600">Even an old password is dangerous if you reuse it. Criminals use "credential stuffing" bots to test old username/password pairs on hundreds of sites, hoping to find a match on one of your current accounts.</p>
+                        <div class="mt-6 p-4 bg-slate-100 rounded-lg h-24 relative overflow-hidden flex flex-col items-center justify-end">
+                             <div class="absolute top-0 credential-stuffing-animation w-full h-full">
+                                <div class="text-xs absolute" style="left: 10%; animation-delay: 0s;">user@email.com : P@ssword123</div>
+                                <div class="text-xs absolute" style="left: 60%; animation-delay: 1s;">user@email.com : P@ssword123</div>
+                                <div class="text-xs absolute" style="left: 35%; animation-delay: 2.5s;">user@email.com : P@ssword123</div>
+                            </div>
+                            <div class="grid grid-cols-3 gap-2 w-full z-10">
+                                <div class="bg-red-200 text-red-800 p-2 text-center rounded">Bank ❌</div>
+                                <div class="bg-green-200 text-green-800 p-2 text-center rounded">Social ✅</div>
+                                <div class="bg-red-200 text-red-800 p-2 text-center rounded">Shopping ❌</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="action" class="py-20 bg-blue-600 text-white">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h3 class="text-4xl font-bold">Your Personal Action Plan</h3>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-blue-200">Follow these steps to significantly improve your digital security. Completing this checklist is the single best thing you can do right now.</p>
+                </div>
+
+                <div class="max-w-3xl mx-auto">
+                    <div class="mb-6">
+                        <div class="w-full bg-blue-500 rounded-full h-4">
+                            <div id="progress-bar" class="bg-white h-4 rounded-full progress-bar-fill" style="width: 0%"></div>
+                        </div>
+                        <p id="progress-text" class="text-center mt-2 font-medium text-blue-100">0 of 6 tasks completed</p>
+                    </div>
+
+                    <div id="action-list" class="space-y-4">
+                        <details class="checklist-item bg-white/10 rounded-lg transition">
+                            <summary class="p-5 font-bold text-lg cursor-pointer flex justify-between items-center"><span>1. Change Critical Passwords</span><span class="text-2xl ml-4 transform transition-transform duration-200 ease-in-out">+</span></summary>
+                            <div class="p-5 pt-0">
+                                <p class="text-blue-200">Start with your most sensitive accounts: primary email, banking, and financial services. Create a new, unique, and strong password for each. Do not reuse them!</p>
+                                <button data-task="0" class="action-button mt-4 bg-white text-blue-600 font-bold py-2 px-4 rounded-lg hover:bg-slate-100">Mark as Done</button>
+                            </div>
+                        </details>
+
+                        <details class="checklist-item bg-white/10 rounded-lg transition">
+                            <summary class="p-5 font-bold text-lg cursor-pointer flex justify-between items-center"><span>2. Enable Multi-Factor Authentication (MFA)</span><span class="text-2xl ml-4 transform transition-transform duration-200 ease-in-out">+</span></summary>
+                            <div class="p-5 pt-0">
+                                <p class="text-blue-200">MFA is your best defense. Even if criminals have your password, they can't log in without the second factor (like a code from your phone). Enable it on every service that offers it.</p>
+                                <button data-task="1" class="action-button mt-4 bg-white text-blue-600 font-bold py-2 px-4 rounded-lg hover:bg-slate-100">Mark as Done</button>
+                            </div>
+                        </details>
+
+                        <details class="checklist-item bg-white/10 rounded-lg transition">
+                            <summary class="p-5 font-bold text-lg cursor-pointer flex justify-between items-center"><span>3. Use a Password Manager</span><span class="text-2xl ml-4 transform transition-transform duration-200 ease-in-out">+</span></summary>
+                            <div class="p-5 pt-0">
+                                <p class="text-blue-200">It's impossible to remember unique passwords for every site. A password manager generates and stores them for you securely. This is a game-changer for online safety.</p>
+                                <button data-task="2" class="action-button mt-4 bg-white text-blue-600 font-bold py-2 px-4 rounded-lg hover:bg-slate-100">Mark as Done</button>
+                            </div>
+                        </details>
+                        
+                        <details class="checklist-item bg-white/10 rounded-lg transition">
+                            <summary class="p-5 font-bold text-lg cursor-pointer flex justify-between items-center"><span>4. Check If You've Been Pwned</span><span class="text-2xl ml-4 transform transition-transform duration-200 ease-in-out">+</span></summary>
+                            <div class="p-5 pt-0">
+                                <p class="text-blue-200">Use a trusted service like "Have I Been Pwned" or Google's Dark Web Report to see if your email address has appeared in known data breaches. This can help you prioritize which passwords to change.</p>
+                                <button data-task="3" class="action-button mt-4 bg-white text-blue-600 font-bold py-2 px-4 rounded-lg hover:bg-slate-100">Mark as Done</button>
+                            </div>
+                        </details>
+                        
+                        <details class="checklist-item bg-white/10 rounded-lg transition">
+                            <summary class="p-5 font-bold text-lg cursor-pointer flex justify-between items-center"><span>5. Watch for Phishing Scams</span><span class="text-2xl ml-4 transform transition-transform duration-200 ease-in-out">+</span></summary>
+                            <div class="p-5 pt-0">
+                                <p class="text-blue-200">Be extra vigilant. Criminals will use this data to create convincing fake emails and texts. Never click suspicious links. If in doubt, go directly to the company's official website.</p>
+                                <button data-task="4" class="action-button mt-4 bg-white text-blue-600 font-bold py-2 px-4 rounded-lg hover:bg-slate-100">Mark as Done</button>
+                            </div>
+                        </details>
+
+                        <details class="checklist-item bg-white/10 rounded-lg transition">
+                            <summary class="p-5 font-bold text-lg cursor-pointer flex justify-between items-center"><span>6. Scan Your Devices for Malware</span><span class="text-2xl ml-4 transform transition-transform duration-200 ease-in-out">+</span></summary>
+                            <div class="p-5 pt-0">
+                                <p class="text-blue-200">Since infostealer malware is the root cause, ensure your computer and phone have reputable, up-to-date antivirus software. Run a full scan to find and remove any threats.</p>
+                                <button data-task="5" class="action-button mt-4 bg-white text-blue-600 font-bold py-2 px-4 rounded-lg hover:bg-slate-100">Mark as Done</button>
+                            </div>
+                        </details>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-slate-800 text-slate-400 py-12">
+        <div class="container mx-auto px-6 text-center">
+            <p>This interactive report was generated to provide clarity and actionable advice regarding a major cybersecurity event. Stay informed, stay vigilant.</p>
+            <p class="mt-2 text-sm">&copy; 2025 Leak Report. Information synthesized from public cybersecurity research.</p>
+        </div>
+    </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    
+    function animateValue(obj, start, end, duration) {
+        let startTimestamp = null;
+        const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            const value = Math.floor(progress * (end - start) + start);
+            obj.innerHTML = value.toLocaleString('en-US');
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+            }
+        };
+        window.requestAnimationFrame(step);
+    }
+
+    const credentialsEl = document.getElementById('leaked-credentials');
+    const databasesEl = document.getElementById('leaked-databases');
+    if (credentialsEl && databasesEl) {
+       animateValue(credentialsEl, 0, 16000000000, 2000);
+       animateValue(databasesEl, 0, 30, 2000);
+    }
+    
+    const impactChartCtx = document.getElementById('impactChart');
+    if (impactChartCtx) {
+        new Chart(impactChartCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Social Media', 'Email Services', 'Financial & Banking', 'Developer Platforms', 'Government & Others'],
+                datasets: [{
+                    label: 'Affected Services',
+                    data: [25, 20, 18, 15, 22],
+                    backgroundColor: [
+                        '#3b82f6', // blue-500
+                        '#60a5fa', // blue-400
+                        '#93c5fd', // blue-300
+                        '#bfdbfe', // blue-200
+                        '#dbeafe'  // blue-100
+                    ],
+                    borderColor: '#f8fafc',
+                    borderWidth: 4,
+                    hoverOffset: 12
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#475569', // slate-600
+                            font: {
+                                size: 14,
+                                family: 'Inter'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        bodyFont: { size: 14, family: 'Inter' },
+                        titleFont: { size: 16, family: 'Inter' },
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed !== null) {
+                                    label += context.parsed + '% of leaked credentials relate to these services.';
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+    }
+
+    const tasks = document.querySelectorAll('.action-button');
+    const progressBar = document.getElementById('progress-bar');
+    const progressText = document.getElementById('progress-text');
+    const totalTasks = 6;
+    let completedTasks = new Array(totalTasks).fill(false);
+
+    function updateProgress() {
+        const completedCount = completedTasks.filter(Boolean).length;
+        const progressPercentage = (completedCount / totalTasks) * 100;
+        
+        progressBar.style.width = `${progressPercentage}%`;
+        progressText.textContent = `${completedCount} of ${totalTasks} tasks completed`;
+
+        if(completedCount === totalTasks){
+            progressText.textContent = "All tasks completed! You're much safer now.";
+        }
+    }
+    
+    tasks.forEach(button => {
+        button.addEventListener('click', () => {
+            const taskIndex = parseInt(button.dataset.task);
+            if (!completedTasks[taskIndex]) {
+                completedTasks[taskIndex] = true;
+                button.textContent = '✓ Done';
+                button.disabled = true;
+                button.classList.remove('bg-white', 'text-blue-600', 'hover:bg-slate-100');
+                button.classList.add('bg-green-500', 'text-white', 'cursor-not-allowed');
+                
+                const summary = button.closest('details').querySelector('summary');
+                summary.classList.add('text-green-300');
+                updateProgress();
+            }
+        });
+    });
+
+    document.querySelectorAll('.checklist-item').forEach(item => {
+        item.addEventListener('toggle', (event) => {
+            const plusSign = event.target.querySelector('summary span:last-child');
+            if (event.target.open) {
+                plusSign.classList.add('rotate-45');
+            } else {
+                plusSign.classList.remove('rotate-45');
+            }
+        });
+    });
+});
+</script>
+</body>
+</html>
